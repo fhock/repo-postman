@@ -22,4 +22,8 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman Collection
-        run: newman run postman-collections/CollectionKasirAja.postman_collection.json
+        run: |
+          newman run postman-collections/CollectionKasirAja.postman_collection.json \
+            --env-var "baseUrl=${{ secrets.BASE_URL }}" \
+            --env-var "username=${{ secrets.USERNAME }}" \
+            --env-var "password=${{ secrets.PASSWORD }}"
