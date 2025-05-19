@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "aa7c39d5-eb09-4b6a-a950-2406cf115c11",
+		"name": "CollectionKasirAja",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44709380",
+		"_collection_link": "https://aditpratama.postman.co/workspace/Adit-Pratama's-Workspace~18db9e55-72fd-4ce1-8033-90400871db97/collection/44709380-aa7c39d5-eb09-4b6a-a950-2406cf115c11?action=share&source=collection_link&creator=44709380"
+	},
+	"item": [
+		{
+			"name": "authentications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Assert response email\", function () {\r",
+							"    var asserEmail = (\"test@coba.com\")\r",
+							"    var jsonData = pm.response.json();\r",
+							"    console.log(jsonData)\r",
+							"    pm.expect(jsonData.data.user.email).to.eql(asserEmail);\r",
+							"});\r",
+							"\r",
+							"// Get token and set to env\r",
+							"var jsonData = pm.response.json();\r",
+							"var resAccessToken = jsonData.data.accessToken;\r",
+							"\r",
+							"pm.environment.set(\"acessToken\", resAccessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}authentications",
+					"host": [
+						"{{baseUrl}}authentications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addCategory",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Get category name and category id\r",
+							"var jsonData = pm.response.json();\r",
+							"var categoryId = jsonData.data.categoryId;\r",
+							"var categoryName = jsonData.data.name;\r",
+							"\r",
+							"pm.environment.set(\"categoryIdentifier\", categoryId);\r",
+							"pm.environment.set(\"categoryName\", categoryName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"name\": \"{{$randomProductName}}\",\r\n   \"description\": \"{{$randomWords}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}categories",
+					"host": [
+						"{{baseUrl}}categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "categoryDetail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// assert category name\r",
+							"pm.test(\"Category Detail\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var categoryName = pm.environment.get(\"categoryName\")\r",
+							"    pm.expect(jsonData.data.category.name).to.eql(categoryName);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}categories/{{categoryIdentifier}}",
+					"host": [
+						"{{baseUrl}}categories"
+					],
+					"path": [
+						"{{categoryIdentifier}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "categoryList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//assert caterogy list\r",
+							"pm.test(\"Category List\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var categoryIdentifier = pm.environment.get(\"categoryIdentifier\")\r",
+							"    var categoryName = pm.environment.get(\"categoryName\")\r",
+							"    console.log(jsonData);\r",
+							"    pm.expect(jsonData.data.categories[0].id).to.eql(categoryIdentifier);\r",
+							"    pm.expect(jsonData.data.categories[0].name).to.eql(categoryName);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}categories?q={{categoryName}}",
+					"host": [
+						"{{baseUrl}}categories"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "{{categoryName}}"
+						},
+						{
+							"key": "page",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateCategory",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// assert category name\r",
+							"pm.test(\"Category Update\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.name).to.eql(\"Update Name\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"name\": \"Update Name\",\r\n   \"description\": \"Update Description\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}categories/{{categoryIdentifier}}",
+					"host": [
+						"{{baseUrl}}categories"
+					],
+					"path": [
+						"{{categoryIdentifier}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteCategory",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// assert category name\r",
+							"pm.test(\"Delete Category\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}categories/{{categoryIdentifier}}",
+					"host": [
+						"{{baseUrl}}categories"
+					],
+					"path": [
+						"{{categoryIdentifier}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
